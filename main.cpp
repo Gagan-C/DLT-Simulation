@@ -12,7 +12,7 @@ using namespace std;
 /* Transaction type */
 enum transactionType {T0, T1, T2, T3};
 
-
+/* Global constants */
 int INIT_EVENT_QUEUE_SIZE= 200;
 int eventCount=1;
 int tick=0;
@@ -26,8 +26,10 @@ int MAX_TEMPORARY_CUSTOMER=10;
 int MAX_TEMPORARY_MINER=15;
 int ALWAYS_ACTIVE_MINER_COUNT=1;
 
-
+/* Declaring file streams for output files */
 ofstream eventFile,requestFile,blockFile;
+
+/* Declaring structures */
 struct candidateblock;
 struct event;
 
@@ -47,6 +49,7 @@ struct transaction{
     double amount;
 };
 
+/* Blockchain unit*/
 struct block{
     int blockId;
     transaction trans[MAX_TRANSACTION_COUNT];
@@ -57,7 +60,7 @@ struct block{
 
 
 
-/*Prototypes*/
+/* Prototypes */
 void openAllFiles();
 void closeAllFiles();
 void writeTransactionEventsToFile(transaction);
@@ -102,7 +105,6 @@ class miner
         int getCountOfMinnedBlocks();
         transaction * getTransaction();
         void setName(string);
-        // void refreshLatestBlock(block *);
         ~miner();
 };
 
@@ -159,17 +161,14 @@ int main() {
     int counter=0;
     while((!eventQueue.empty()) && eventQueue.size()<=MAX_EVENT_COUNT){
             
-            // cout<<eventQueue.front().isTransaction <<" "<<eventQueue.front().isMiner<<" "<<eventQueue.front().isCustomer<<
-            // "  "<<eventQueue.front().m.getName()<<" "<<eventQueue.front().cust.name<<" "<<eventQueue.size()<<" "<<
-            // eventQueue.front().tran.sender.name<<" "<<eventQueue.front().tran.amount
-            // <<endl;
-            //generate random number of events when processing
+        //generate random number of events when processing
         triggerEvent();
         counter++;
         
     }
 
-     cout<<"Average number of transaction attempts per tick: ";
+    /* Calculates and prints statistics for transaction attempts */
+    cout<<"Average number of transaction attempts per tick: ";
     double averageAttempts=0;
     double averageBlocks=0;
     for(long unsigned int i=0;i<miners.size();i++){
@@ -178,9 +177,13 @@ int main() {
     }
     averageAttempts=averageAttempts/(double)(tick);
     cout<<averageAttempts<<endl;
+
+    /* Calculates and print statistics for blocks mined per miner */
     cout<<"Average number of Blocks mined per miner per tick: ";
     averageBlocks=averageBlocks/(double)(tick);
     cout<<averageBlocks<<endl;
+
+    /* Closing all files */
     closeAllFiles();
     return 0;
 }
@@ -326,7 +329,8 @@ string miner::hashstring(string toBeHashed){
     return output;
 }
 string miner::hashBlock(){
-    
+
+    /* Creating a string for hashing */
     string data= "";
     data=data+to_string(latestBlock->blockId);
     data=data+latestBlock->minedBy;
@@ -335,6 +339,7 @@ string miner::hashBlock(){
     {
         data=data+latestBlock->trans[i].sender.name+latestBlock->trans[i].reciever.name;
     }
+
     return hashstring(data);
 }
 void miner::updateCustomer(transaction t){
@@ -360,7 +365,7 @@ void miner::updateCustomer(transaction t){
         cust[senderIndex].dollars=cust[senderIndex].dollars-t.amount;
         break;
     case T2:
-    //transfer amount
+        //transfer amount
         cust[recieverIndex].dollars=cust[recieverIndex].dollars+t.amount;
         cust[senderIndex].dollars=cust[senderIndex].dollars-t.amount;
         break;
@@ -375,6 +380,7 @@ void miner::updateCustomer(transaction t){
 
 /* Definations*/
 void initCustomer(){
+    /* Permanent Customer */
     customer A;
     A.id=cust.size();
     A.name="A";
@@ -401,6 +407,8 @@ void initCustomer(){
     D.dollars=10000;
     D.isActive=true;
     cust.push_back(D);
+
+    /* Temporary Customers */
     for (int i = 0; i < MAX_TEMPORARY_CUSTOMER; i++)
     {
         customer temporaryCustomer;
@@ -528,18 +536,22 @@ event generateSingleEvent(){
         tran.sender=getActiveCustomer();
         tran.amount=rand()%100+50;
         double randomTransactionProbability= (double) rand()/(double) RAND_MAX;
-        
-        if(randomTransactionProbability<=0.1){	//10 percent t0 deposit
+
+        /* 10 percent probability to t0 transaction type (deposit) */
+        if(randomTransactionProbability<=0.1){	
             tran.type=T0;
         }
-        else if (randomTransactionProbability<=0.2){ //10 percent t1 withdraw
+        /* 10 percent probability to t1 transaction type (withdraw) */
+        else if (randomTransactionProbability<=0.2){ 
             tran.type=T1;
         }
-        else if(randomTransactionProbability<=0.3){  //10 percent t2 trnsfer
+        /* 10 percent probability to t2 transaction type (transfer)*/
+        else if(randomTransactionProbability<=0.3){ 
             tran.type=T2;
             tran.reciever=getActiveCustomer();
         }
-        else{						//70 percent t3 nulll transaction
+        /* 70 percent probability for t3 transaction type (null transaction)*/
+        else{						
             tran.type=T3;
         }
        
