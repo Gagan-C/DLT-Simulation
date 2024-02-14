@@ -27,3 +27,9 @@ Files:
     events.csv: contains events generated during the simulation.
     blockchain.csv: contains blocks generated during the simulation.
     request.csv: contains requests generated during the simulation.
+
+Docker Image:
+    Open terminal, Execute "docker build ." 
+    This would  create an image, Please note image id
+    Now execute "docker run -it <IMAGE-ID>" 
+    ./simulation would execute the simulation and generate output files.
