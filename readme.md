@@ -13,6 +13,7 @@ Steps to compile and executing the simulation:
     3) Execute "./simulation" to start the simulation.
 
 Terminology:
+
     Events: events refers to transactions that users are trying to generate.
     Requests: requests are at a miner level where they receive a event and try to work on the transaction.
     Block: it is a unit of blockchain where immutable transactions are stored.
@@ -21,14 +22,17 @@ Terminology:
     Miner: A member in the system that validates transactions and tries to add blocks to the blockchain.
 
 Algorithm used:
+
     Proof of Elapsed Time (PoET): It is a network consensus algorithm used for low resource utilization.
     
 Files:
+
     events.csv: contains events generated during the simulation.
     blockchain.csv: contains blocks generated during the simulation.
     request.csv: contains requests generated during the simulation.
 
 Docker Image:
+
     Open terminal, Execute "docker build ." 
     This would  create an image, Please note image id
     Now execute "docker run -it <IMAGE-ID>" 
